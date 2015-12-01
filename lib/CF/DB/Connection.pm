@@ -1,10 +1,10 @@
 package CF::DB::Connection;
 
 use 5.018002;
-use strict;
-use warnings;
 use KiokuDB;
 use Moose;
+
+our $VERSION = '0.01';
 
 has 'config' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
 has 'dbhs' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
