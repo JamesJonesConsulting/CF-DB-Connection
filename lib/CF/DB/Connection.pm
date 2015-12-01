@@ -13,16 +13,16 @@ has 'dbhs' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
 sub getConnection {
     my $self = shift;
     my $key = shift;
-    if(exists $self->dbhs{$key}) {
-        return $self->dbhs{$key};
+    if(exists($self->dbhs->{$key})) {
+        return $self->dbhs->{$key};
     }
-    if(exists $self->config{$key}) {
-        $self->dbhs{$key} = KiokuDB->connect(
-            $self->config{$key}{'dsn'},
-            user     => $self->config{$key}{'user'},
-            password => $self->config{$key}{'password'},
+    if(exists $self->config->{$key}) {
+        $self->dbhs->{$key} = KiokuDB->connect(
+            $self->config->{$key}{'dsn'},
+            user     => $self->config->{$key}{'user'},
+            password => $self->config->{$key}{'password'},
         );
-        return $self->dbhs{$key};
+        return $self->dbhs->{$key};
     } else {
         die 'No config exists for named connection: $key';
     }
