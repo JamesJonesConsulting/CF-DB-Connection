@@ -2,12 +2,14 @@ package CF::DB::Connection;
 
 use 5.018002;
 use KiokuDB;
+use DBI;
 use Moose;
 
 our $VERSION = '0.01';
 
 has 'config' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
-has 'dbhs' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
+has 'dbhs' => ( is => 'rw', isa => 'HashRef', default => sub { {} }, init_arg => undef );
+has 'kdbhs' => ( is => 'rw', isa => 'HashRef', default => sub { {} }, init_arg => undef );
 
 # Preloaded methods go here.
 sub getConnection {
@@ -17,12 +19,33 @@ sub getConnection {
         return $self->dbhs->{$key};
     }
     if(exists $self->config->{$key}) {
-        $self->dbhs->{$key} = KiokuDB->connect(
+        $self->dbhs->{$key} = DBI->connect(
+            $self->config->{$key}{'dsn'}, 
+            $self->config->{$key}{'user'}, 
+            $self->config->{$key}{'password'}, 
+            {
+                PrintError => 0,
+                RaiseError => 0
+            }
+        );
+        return $self->dbhs->{$key};
+    } else {
+        die 'No config exists for named connection: $key';
+    }
+}
+sub getKiokuConnection {
+    my $self = shift;
+    my $key = shift;
+    if(exists($self->kdbhs->{$key})) {
+        return $self->kdbhs->{$key};
+    }
+    if(exists $self->config->{$key}) {
+        $self->kdbhs->{$key} = KiokuDB->connect(
             $self->config->{$key}{'dsn'},
             user     => $self->config->{$key}{'user'},
             password => $self->config->{$key}{'password'},
         );
-        return $self->dbhs->{$key};
+        return $self->kdbhs->{$key};
     } else {
         die 'No config exists for named connection: $key';
     }
