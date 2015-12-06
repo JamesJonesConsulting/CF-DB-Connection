@@ -24,7 +24,7 @@ sub getConnection {
             $self->config->{$key}{'user'}, 
             $self->config->{$key}{'password'}, 
             {
-                PrintError => 0,
+                PrintError => 1,
                 RaiseError => 0
             }
         );
